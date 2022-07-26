@@ -1,9 +1,21 @@
+---
+title: 'ASAP Policy: Stock Market Evidence'
+author: "Saksham Sudershan"
+date: "25 July 2022"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(ggthemes)
+setwd("~/GitHub/ASAP_Policy_Stock_Market_Evidence")
+```
 
+```{r modelling, echo = T}
 # Reading Pre-ASAP Crash Data and Creating Prediction Data Frame
-estim1 <- data.frame(read.csv("GitHub/ASAP_Policy_Stock_Market_Evidence/Estimation Dataset I - Sheet1.csv"))
-evt1 <- data.frame(read.csv("GitHub/ASAP_Policy_Stock_Market_Evidence/Event Dataset I - Sheet1.csv"))
+estim1 <- data.frame(read.csv("Estimation Dataset I - Sheet1.csv"))
+evt1 <- data.frame(read.csv("Event Dataset I - Sheet1.csv"))
 pred <- data.frame()
 
 # Using Linear Model to calculate Fama-French Factors
@@ -29,8 +41,8 @@ for(i in 1:15){
 ar1 <- ar1 %>% mutate(avg= rowMeans(ar1))
 
 # Reading Post-ASAP Crash Data and Creating Prediction Data Frame
-estim2 <- data.frame(read.csv("GitHub/ASAP_Policy_Stock_Market_Evidence/Estimation Dataset II - Sheet1.csv"))
-evt2 <- data.frame(read.csv("GitHub/ASAP_Policy_Stock_Market_Evidence/Event Dataset II - Sheet1.csv"))
+estim2 <- data.frame(read.csv("Estimation Dataset II - Sheet1.csv"))
+evt2 <- data.frame(read.csv("Event Dataset II - Sheet1.csv"))
 pred <- data.frame()
 
 # Using Linear Model to calculate Fama-French Factors
@@ -55,6 +67,9 @@ for(i in 1:15){
 # Adding Average of Rows in Abnormal Returns Data Set
 ar2 <- ar2 %>% mutate(avg= rowMeans(ar2))
 
+```
+
+```{r plots, echo=T}
 # Creating Heat Map For Both Pre and Post ASAP Data Sets
 heat_map_data1 <- rbind(estim1,evt1)
 heat_map_data1 <- heat_map_data1[4*(1:15)-3]
@@ -127,3 +142,4 @@ ggplot(data=ar2) +
   ggtitle("Abnormal Returns in Event Window",subtitle = "Post-ASAP Policy")+
   ylab("Abnormal Returns")+
   xlab("Days Since Crash")
+```
