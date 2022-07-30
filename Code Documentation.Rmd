@@ -75,30 +75,28 @@ heat_map_data1 <- rbind(estim1,evt1)
 heat_map_data1 <- heat_map_data1[4*(1:15)-3]
 heat_map_data1 <- gather(heat_map_data1, key = "Case", Returns, factor_key = TRUE)
 heat_map_data1 <- mutate(heat_map_data1, date=rep(-119:10,times=14))
-ggplot(data=heat_map_data1) + 
-  geom_tile(mapping=aes(x=Case,y=date,fill=Returns),color="white",lwd=0.5)+
-  scale_fill_binned(type = "viridis")+
-  theme_solarized()+
-  ggtitle("Actual Returns Before and After Crash",subtitle = "Pre-ASAP Policy")+
-  ylab("Days Before and After Crash")+
-  xlab("Different Cases")+
-  theme(axis.text.x=element_blank())
-
 heat_map_data2 <- rbind(estim2,evt2)
 heat_map_data2 <- heat_map_data2[4*(1:15)-3]
 heat_map_data2 <- gather(heat_map_data2, key = "Case", Returns, factor_key = TRUE)
 heat_map_data2 <- mutate(heat_map_data2, date=rep(-119:10,times=14))
-ggplot(data=heat_map_data2) + 
+
+heat_map_data1 <- mutate(heat_map_data1, variety="Pre-ASAP Policy")
+heat_map_data2 <- mutate(heat_map_data2, variety="Post-ASAP Policy")
+final_heatmap_data <- rbind(heat_map_data1,heat_map_data2)
+rm(heat_map_data1,heat_map_data2)
+
+ggplot(data=final_heatmap_data) + 
   geom_tile(mapping=aes(x=Case,y=date,fill=Returns),color="white",lwd=0.5)+
   scale_fill_binned(type = "viridis")+
+  facet_grid(~variety)+
   theme_solarized()+
-  ggtitle("Actual Returns Before and After Crash",subtitle = "Post-ASAP Policy")+
+  ggtitle("Actual Returns Before and After Crash")+
   ylab("Days Before and After Crash")+
   xlab("Different Cases")+
   theme(axis.text.x=element_blank())
 
 # Plotting Abnormal Returns for Both Pre and Post ASAP Data Sets
-ggplot(data=ar1) +
+plot1<- ggplot(data=ar1) +
   geom_smooth(mapping = aes(y=avg,x=1:10), color='Black') +
   geom_point(mapping = aes(y=V1,x=1:10),alpha=0.3)+
   geom_point(mapping = aes(y=V2,x=1:10),alpha=0.3)+
@@ -121,7 +119,7 @@ ggplot(data=ar1) +
   xlab("Days Since Crash")
 
 
-ggplot(data=ar2) +
+plot2 <- ggplot(data=ar2) +
   geom_smooth(mapping = aes(y=avg,x=1:10), color='Black') +
   geom_point(mapping = aes(y=V1,x=1:10),alpha=0.3)+
   geom_point(mapping = aes(y=V2,x=1:10),alpha=0.3)+
@@ -142,4 +140,5 @@ ggplot(data=ar2) +
   ggtitle("Abnormal Returns in Event Window",subtitle = "Post-ASAP Policy")+
   ylab("Abnormal Returns")+
   xlab("Days Since Crash")
+cowplot::plot_grid(plot1, plot2, labels = "AUTO")
 ```
